@@ -51,7 +51,7 @@ const App = () => {
 
   // Task delete
   const deleteTask = (id) => {
-    axios.delete(`${BasicUrl}/tasks/id`)
+    axios.delete(`${BasicUrl}/tasks/${id}`)
       .then(() => {
         return axios.get(`${BasicUrl}/tasks`);
       })

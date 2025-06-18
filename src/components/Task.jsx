@@ -9,7 +9,7 @@ const Task = (props) => {
     <li className="tasks__item">
       <button
         className={`tasks__item__toggle ${buttonClass}`}
-        onClick={() => props.onToggleTask(props.id)}
+        onClick={() => props.onToggleTask(props.id, props.isComplete)}
       >
         {props.title}
       </button>
