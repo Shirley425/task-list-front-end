@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 
-const BasicUrl = 'http://localhost:5000';
+const BasicUrl = 'http://127.0.0.1:5001';
 // const TASKS = [
 //   {
 //     id: 1,
