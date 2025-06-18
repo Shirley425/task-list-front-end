@@ -1,39 +1,66 @@
 import TaskList from './components/TaskList.jsx';
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const TASKS = [
-  {
-    id: 1,
-    title: 'Mow the lawn',
-    isComplete: false,
-  },
-  {
-    id: 2,
-    title: 'Cook Pasta',
-    isComplete: true,
-  },
-];
+
+const BasicUrl = 'http://localhost:5000';
+// const TASKS = [
+//   {
+//     id: 1,
+//     title: 'Mow the lawn',
+//     isComplete: false,
+//   },
+//   {
+//     id: 2,
+//     title: 'Cook Pasta',
+//     isComplete: true,
+//   },
+// ];
 
 const App = () => {
   // Usestate moved from Task.jsx
-  const [tasks, setTasks] = useState(TASKS);
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${BasicUrl}/tasks`)
+      .then((response) => {
+        setTasks(response.data);
+      })
+      .catch((error) => {
+        console.log('Error getting tasks:', error);
+      });
+  }, []);
 
   //  Button change  when task is complete
-  const toggleTaskisComplete = (id) => {
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === id) {
-        return { ...task, isComplete: !task.isComplete };
-      }
-      return task;
-    });
-    setTasks(updatedTasks);
+  const toggleTaskisComplete = (id, isComplete) => {
+    const url = isComplete
+      ? `${BasicUrl}/tasks/${id}/mark_incomplete`
+      : `${BasicUrl}/tasks/${id}/mark_complete`;
+    axios.patch(url)
+      .then(() => {
+        return axios.get(`${BasicUrl}/tasks`);
+      })
+      .then((response) => {
+        setTasks(response.data);
+      })
+      .catch((error) => {
+        console.error('Error updating task status:', error);
+      });
   };
 
   // Task delete
   const deleteTask = (id) => {
-    const updatedTasks = tasks.filter((task) => task.id !== id);
-    setTasks(updatedTasks);
+    axios.delete(`${BasicUrl}/tasks/id`)
+      .then(() => {
+        return axios.get(`${BasicUrl}/tasks`);
+      })
+      .then((response) => {
+        setTasks(response.data);
+      })
+      .catch((error) => {
+        console.error('Error deleting task:', error);
+      });
   };
 
   return (
@@ -51,5 +78,6 @@ const App = () => {
     </div>
   );
 };
+
 
 export default App;
