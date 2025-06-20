@@ -4,7 +4,7 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const BasicUrl = 'http://127.0.0.1:5001';
+const BasicUrl = import.meta.env.VITE_BASE_URL;
 
 const App = () => {
   // Usestate moved from Task.jsx
