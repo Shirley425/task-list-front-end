@@ -10,6 +10,7 @@
 .tasks__item {
   display: flex;
   align-items: top;
+  margin-right: 1em;
 }
 
 .tasks__item__toggle:hover {
