@@ -1,36 +1,42 @@
 import TaskList from './components/TaskList.jsx';
+import NewTaskForm from './components/NewTaskForm.jsx';
 import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-
 const BasicUrl = 'http://127.0.0.1:5001';
-// const TASKS = [
-//   {
-//     id: 1,
-//     title: 'Mow the lawn',
-//     isComplete: false,
-//   },
-//   {
-//     id: 2,
-//     title: 'Cook Pasta',
-//     isComplete: true,
-//   },
-// ];
 
 const App = () => {
   // Usestate moved from Task.jsx
   const [tasks, setTasks] = useState([]);
 
+const normalizeTasks = (data) => {
+  return data.map((task) => ({
+    ...task,
+    isComplete: task.is_complete
+  }));
+};
+
   useEffect(() => {
     axios.get(`${BasicUrl}/tasks`)
       .then((response) => {
-        setTasks(response.data);
+        setTasks(normalizeTasks(response.data));
       })
       .catch((error) => {
         console.log('Error getting tasks:', error);
       });
   }, []);
+
+  const createTask = (newTask) => {
+  axios.post(`${BasicUrl}/tasks`, newTask)
+    .then(() => axios.get(`${BasicUrl}/tasks`))
+    .then((response) => {
+      setTasks(normalizeTasks(response.data));
+    })
+    .catch((error) => {
+      console.error("Error creating new task:", error);
+    });
+};
 
   //  Button change  when task is complete
   const toggleTaskisComplete = (id, isComplete) => {
@@ -42,7 +48,7 @@ const App = () => {
         return axios.get(`${BasicUrl}/tasks`);
       })
       .then((response) => {
-        setTasks(response.data);
+        setTasks(normalizeTasks(response.data));
       })
       .catch((error) => {
         console.error('Error updating task status:', error);
@@ -56,7 +62,7 @@ const App = () => {
         return axios.get(`${BasicUrl}/tasks`);
       })
       .then((response) => {
-        setTasks(response.data);
+        setTasks(normalizeTasks(response.data));
       })
       .catch((error) => {
         console.error('Error deleting task:', error);
@@ -69,6 +75,7 @@ const App = () => {
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
+        <NewTaskForm onCreateTask={createTask} />
         <TaskList
           tasks={tasks}
           onToggleTask={toggleTaskisComplete}
